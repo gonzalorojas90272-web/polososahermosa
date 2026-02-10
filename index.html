@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>El Frasco de Amor</title>
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(180deg,#ffd6e7,#ffeaf4);
+  overflow:hidden;
+}
+
+/* Corazones */
+.heart{
+  position:fixed;
+  bottom:-50px;
+  animation:float 10s linear infinite;
+  opacity:0.7;
+}
+@keyframes float{
+  to{transform:translateY(-120vh);}
+}
+
+/* INICIO */
+#inicio{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#fff0f6;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:20px;
+  z-index:10;
+}
+
+#inicio p{
+  max-width:320px;
+  line-height:1.5;
+  margin:5px 0;
+}
+
+input{
+  margin:6px;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  text-align:center;
+  width:90px;
+  font-size:15px;
+}
+
+#inicio button{
+  margin-top:15px;
+  padding:12px 25px;
+  border:none;
+  border-radius:20px;
+  background:#ff4da6;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+#inicio button:hover{
+  background:#ff3385;
+  transform:scale(1.05);
+}
+
+/* Mensaje de carga */
+#mensajeCarga {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 240, 246, 0.95);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+  text-align: center;
+}
+
+#mensajeCarga h3 {
+  color: #ff4da6;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+#contadorSegundos {
+  font-size: 48px;
+  font-weight: bold;
+  color: #ff4da6;
+  margin: 20px 0;
+}
+
+.corazonCarga {
+  font-size: 40px;
+  animation: latido 1s infinite;
+}
+
+@keyframes latido {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* FRASCO */
+#frasco-container{
+  display:none;
+  text-align:center;
+  margin-top:30px;
+  padding:20px;
+}
+
+#tapa{
+  width:130px;
+  height:35px;
+  background:#fff;
+  border-radius:10px;
+  margin:0 auto;
+  box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+#frasco{
+  width:240px;
+  height:330px;
+  margin:20px auto;
+  background:rgba(255,255,255,0.35);
+  border:6px solid white;
+  border-radius:120px 120px 40px 40px;
+  backdrop-filter:blur(6px);
+  position:relative;
+  box-shadow:0 0 25px rgba(0,0,0,0.2);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.mensaje{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:80%;
+  padding:15px;
+  border-radius:15px;
+  color:white;
+  font-size:15px;
+  box-shadow:0 0 10px rgba(0,0,0,0.2);
+  text-align:center;
+  word-wrap:break-word;
+}
+
+.firma{
+  font-size:11px;
+  text-align:right;
+  margin-top:8px;
+  opacity:0.9;
+}
+
+.colores{
+  margin-top:20px;
+}
+
+.colores button{
+  margin:8px;
+  padding:12px 18px;
+  border:none;
+  border-radius:20px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.colores button:hover{
+  transform:scale(1.05);
+  opacity:0.9;
+}
+
+#poemaBtn{
+  background:#a55eea;
+  color:white;
+  margin-top:20px;
+  padding:12px 24px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:16px;
+  transition:0.3s;
+}
+
+#poemaBtn:hover{
+  background:#8a3bd6;
+  transform:scale(1.05);
+}
+
+/* WhatsApp logo */
+#wa{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:55px;
+  transition:0.3s;
+}
+
+#wa:hover{
+  transform:scale(1.1);
+}
+
+/* Poema */
+#poemaBox{
+  margin-top:20px;
+  padding:20px;
+  display:none;
+  font-style:italic;
+  max-width:320px;
+  margin:20px auto;
+  background:rgba(255,255,255,0.8);
+  border-radius:15px;
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+#saludo{
+  color:#ff4da6;
+  font-size:24px;
+  margin-bottom:20px;
+}
+
+#contadorDias{
+  margin-top:15px;
+  font-weight:bold;
+  color:#ff4da6;
+  font-size:18px;
+}
+</style>
+</head>
+<body>
+
+<div id="inicio">
+  <h2>Este frasco es para vos 💖</h2>
+  <p>Acá dentro hay palabras pensadas solo para vos.<br>
+  Cuando te sientas triste, feliz, ansiosa o desmotivada, tocá un color y vas a leer algo que te abrace el corazón 💌</p>
+  
+  <p><b>Escribí tu nombre y la fecha en la que empezamos a ser novios</b></p>
+  
+  <input id="nombreInput" placeholder="Tu nombre"><br>
+  <input id="dia" placeholder="Día" type="number" min="1" max="31">
+  <input id="mes" placeholder="Mes" type="number" min="1" max="12">
+  <input id="anio" placeholder="Año" type="number" min="2000" max="2050">
+  
+  <button onclick="esperar()">Enviar a mi Polososo</button>
+  <p id="contadorDias" style="margin-top:10px; font-weight:bold; color:#ff4da6;"></p>
+</div>
+
+<!-- Mensaje de carga con contador -->
+<div id="mensajeCarga">
+  <h3>Cargando......para confirmar que sos el amor de mi vida 💖</h3>
+  <div class="corazonCarga">❤️</div>
+  <div id="contadorSegundos">20</div>
+  <p>Esperá un momentito amor...</p>
+</div>
+
+<div id="frasco-container">
+  <h3 id="saludo"></h3>
+  
+  <div id="tapa"></div>
+  <div id="frasco">
+    <div class="mensaje" style="background:#ffd6e7; color:#333;">
+      Tocá un color para recibir tu mensaje 💖
+      <div class="firma">De tu Polososo 💌</div>
+    </div>
+  </div>
+  
+  <div class="colores">
+    <button style="background:#ff6b81" onclick="mostrar('triste')">Triste</button>
+    <button style="background:#feca57" onclick="mostrar('desmotivada')">Desmotivada</button>
+    <button style="background:#1dd1a1" onclick="mostrar('feliz')">Feliz</button>
+    <button style="background:#54a0ff" onclick="mostrar('ansiosa')">Ansiosa</button>
+  </div>
+  
+  <button id="poemaBtn" onclick="mostrarPoema()">Poema</button>
+  <div id="poemaBox"></div>
+</div>
+
+<a href="https://wa.me/59894112354" target="_blank">
+  <img id="wa" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+</a>
+
+<script>
+// ===== CORAZONES =====
+for(let i=0;i<25;i++){
+  let h=document.createElement('div');
+  h.className='heart';
+  h.innerHTML='💖';
+  h.style.left=Math.random()*100+'vw';
+  h.style.fontSize=(15+Math.random()*30)+'px';
+  h.style.animationDuration=(6+Math.random()*8)+'s';
+  document.body.appendChild(h);
+}
+
+// ===== MENSAJES =====
+const mensajes = {
+  triste:[
+    "No estás sola, yo estoy con vos 💗",
+    "Tu tristeza no cambia lo increíble que sos ✨",
+    "Respirá, esto va a pasar 💞",
+    "Aunque el día sea gris, vos brillás igual",
+    "Cada lágrima la secamos juntos 💖",
+    "Mi abrazo está contigo aunque no me veas 🫂",
+    "Tu corazón es más fuerte de lo que creés 💗",
+    "Cuando quieras llorar, llorá conmigo 💓",
+    "Tus lágrimas riegan nuestro amor 💕",
+    "Te abrazo con el alma aunque esté lejos 💞",
+    "Tu tristeza también la siento y la abrazo 💖",
+    "Siempre estoy aquí para vos 🫶",
+    "No dejés que la tristeza te gane 💗",
+    "Mi amor te protege incluso en la tristeza 💌",
+    "Mi mano siempre está lista para sostenerte 🤲💖",
+    "Tu sonrisa volverá y yo estaré ahí 😘",
+    "Aunque llueva, nuestro amor brilla ☔💖",
+    "Juntos podemos con cualquier emoción 💗",
+    "No hay tristeza que nos separe 💞",
+    "Te veo y mi corazón se enciende 💓"
+  ],
+  desmotivada:[
+    "Vos podés con todo 💪💖",
+    "Yo confío en vos más de lo que imaginás 🌟",
+    "No te rindas, sos fuerte 🌷",
+    "Acordate quién sos 😍",
+    "Cada paso es un logro 💌",
+    "Sos capaz de cosas increíbles 💗",
+    "No hay límites para vos 💞",
+    "Confío en tu corazón y tu fuerza 💓",
+    "Siempre adelante amor mío 💖",
+    "Sos la persona más valiente 💗",
+    "Nunca dejes de intentarlo 💌",
+    "Tu esfuerzo vale muchísimo 💞",
+    "Sos luz en cada desafío 💓",
+    "Mi amor te impulsa siempre 💖",
+    "Cada día es una nueva oportunidad 💗",
+    "Nunca dudes de vos 💌",
+    "Sos mi inspiración 💞",
+    "Juntos podemos con todo 💓",
+    "No hay montaña que no puedas escalar 💖",
+    "Confía en tu corazón 💗"
+  ],
+  feliz:[
+    "Tu sonrisa es mi lugar favorito 😄💘",
+    "Verte feliz es mi felicidad 💞",
+    "Guardá este momento 🌈",
+    "Que esta alegría te dure todo el día 🥰",
+    "Sos mi alegría 💖",
+    "Cada risa tuya me ilumina 💗",
+    "Sos mi mundo feliz 💞",
+    "Contigo todo es mejor 💓",
+    "Tu felicidad me hace sonreír 💖",
+    "Sos la razón de mis sonrisas 💗",
+    "Cada instante con vos es un regalo 💞",
+    "Que tu alegría nunca se apague 💓",
+    "Sos mi sol radiante 💖",
+    "Tu felicidad es mi paz 💗",
+    "Sos mi inspiración feliz 💞",
+    "Siempre juntos en la alegría 💓",
+    "Cada sonrisa tuya me enamora 💖",
+    "Sos única y brillante 💗",
+    "Todo es más lindo con vos 💞",
+    "Sos mi mundo 💓"
+  ],
+  ansiosa:[
+    "Tranquila, todo está bien 🌸",
+    "Inhalá amor, exhalá miedo 💗",
+    "Estoy con vos 🫶",
+    "Tu corazón está a salvo 💖",
+    "Respirá, mi amor 💓",
+    "Todo va a estar bien 💌",
+    "Sos mi calma 💞",
+    "Mi abrazo te protege 💗",
+    "Sos segura conmigo 💖",
+    "Todo se va a arreglar 💓",
+    "Mi amor te cuida 💌",
+    "Sos mi paz interior 💞",
+    "No te preocupes, estoy aquí 💗",
+    "Sos fuerte incluso cuando dudas 💖",
+    "Confía en mí 💓",
+    "Cada latido tuyo me importa 💌",
+    "Sos mi tranquilidad 💞",
+    "Nada puede hacerte daño 💗",
+    "Mi amor te abraza siempre 💖",
+    "Sos mi refugio 💓"
+  ]
+};
+
+// Para no repetir mensajes
+let usados = { triste:[], desmotivada:[], feliz:[], ansiosa:[] };
+
+// Función para mostrar mensaje
+function mostrar(tipo){
+  let arr = mensajes[tipo];
+  if(usados[tipo].length === arr.length) usados[tipo] = [];
+  let disponibles = arr.filter(m => !usados[tipo].includes(m));
+  let elegido = disponibles[Math.floor(Math.random()*disponibles.length)];
+  usados[tipo].push(elegido);
+
+  document.getElementById("frasco").innerHTML = `
+  <div class="mensaje" style="background:${color(tipo)}">
+    ${elegido}
+    <div class="firma">De tu Polososo 💌</div>
+  </div>`;
+}
+
+// Color según emoción
+function color(t){
+  return {
+    triste:"#ff6b81",
+    desmotivada:"#feca57",
+    feliz:"#1dd1a1",
+    ansiosa:"#54a0ff"
+  }[t];
+}
+
+// Función para mostrar poema
+function mostrarPoema(){
+  const poemas = [
+    "Eres el sol que ilumina mi día,\nLa luna que alumbra mi noche,\nEl latido que da sentido a mi vida,\nEres mi todo, mi amor eterno. 💖",
+    "En tus ojos encuentro el universo,\nEn tu risa mi paz y mi gozo,\nEn tu amor mi razón de existir,\nEres mi sueño hecho realidad. 🌟",
+    "Como el mar necesita la orilla,\nComo el cielo necesita estrellas,\nAsí mi corazón te necesita a ti,\nPara latir, para amar, para siempre. 💕",
+    "Si cada estrella fuera un beso,\nTe daría todo el cielo.\nSi cada gota de lluvia fuera un te quiero,\nTe daría todo el mar.\nPero como solo tengo un corazón,\nTe lo doy completo y sin reservas. 💗"
+  ];
+  
+  const poemaElegido = poemas[Math.floor(Math.random() * poemas.length)];
+  const poemaBox = document.getElementById("poemaBox");
+  
+  poemaBox.innerHTML = `<p style="white-space: pre-line; text-align: center;">${poemaElegido}</p>`;
+  poemaBox.style.display = "block";
+  
+  // Ocultar después de 10 segundos
+  setTimeout(() => {
+    poemaBox.style.display = "none";
+  }, 10000);
+}
+
+// ===== CONTADOR DE 20 SEGUNDOS =====
+function iniciarContador() {
+  let segundos = 20;
+  const contadorElement = document.getElementById("contadorSegundos");
+  const mensajeCarga = document.getElementById("mensajeCarga");
+  
+  mensajeCarga.style.display = "flex";
+  
+  const intervalo = setInterval(() => {
+    segundos--;
+    contadorElement.textContent = segundos;
+    
+    if (segundos <= 0) {
+      clearInterval(intervalo);
+      mensajeCarga.style.display = "none";
+      mostrarFrasco();
+    }
+  }, 1000);
+}
+
+// ===== MOSTRAR FRASCO DESPUÉS DEL CONTADOR =====
+function mostrarFrasco() {
+  const n = document.getElementById("nombreInput").value;
+  const d = document.getElementById("dia").value;
+  const m = document.getElementById("mes").value;
+  const a = document.getElementById("anio").value;
+  
+  // Calcular días juntos
+  const fechaInicio = new Date(a, m-1, d);
+  const hoy = new Date();
+  const diffTime = Math.abs(hoy - fechaInicio);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  // Guardar datos en localStorage
+  localStorage.setItem('nombrePareja', n);
+  localStorage.setItem('fechaInicio', `${d}/${m}/${a}`);
+  
+  // Mostrar frasco
+  document.getElementById("inicio").style.display = "none";
+  document.getElementById("frasco-container").style.display = "block";
+  
+  // Mostrar saludo personalizado
+  document.getElementById("saludo").textContent = `Para ${n} 💖`;
+  
+  // Mostrar contador de días
+  document.getElementById("contadorDias").textContent = `Llevamos ${diffDays} días juntos 💕`;
+  
+  // Mostrar mensaje inicial
+  mostrar('feliz');
+}
+
+// ===== ESPERAR + GUARDAR DATOS =====
+function esperar(){
+  let n = document.getElementById("nombreInput").value;
+  let d = document.getElementById("dia").value;
+  let m = document.getElementById("mes").value;
+  let a = document.getElementById("anio").value;
+
+  if(!n || !d || !m || !a){
+    alert("Completá todo 💖");
+    return;
+  }
+
+  // Validar fecha
+  const fechaInicio = new Date(a, m-1, d);
+  const hoy = new Date();
+  
+  if(fechaInicio > hoy){
+    alert("La fecha no puede ser futura 💖");
+    return;
+  }
+
+  if(fechaInicio.getFullYear() != a || 
+     fechaInicio.getMonth()+1 != m || 
+     fechaInicio.getDate() != d){
+    alert("Fecha inválida 💖");
+    return;
+  }
+
+  // Iniciar el contador de 20 segundos
+  iniciarContador();
+}
+
+// Cargar datos si ya existen
+window.onload = function() {
+  const nombreGuardado = localStorage.getItem('nombrePareja');
+  const fechaGuardada = localStorage.getItem('fechaInicio');
+  
+  if(nombreGuardado && fechaGuardada){
+    const [d, m, a] = fechaGuardada.split('/').map(Number);
+    const fechaInicio = new Date(a, m-1, d);
+    const hoy = new Date();
+    const diffTime = Math.abs(hoy - fechaInicio);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    document.getElementById("inicio").style.display = "none";
+    document.getElementById("frasco-container").style.display = "block";
+    document.getElementById("saludo").textContent = `Para ${nombreGuardado} 💖`;
+    document.getElementById("contadorDias").textContent = `Llevamos ${diffDays} días juntos 💕`;
+  }
+};
+</script>
+</body>
+</html>
