@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Para mi amor</title>
+
+<style>
+
+body{
+margin:0;
+background:black;
+color:white;
+font-family:Arial, sans-serif;
+overflow:hidden;
+text-align:center;
+}
+
+/* fecha */
+
+#date{
+position:fixed;
+top:10px;
+left:50%;
+transform:translateX(-50%);
+font-size:12px;
+opacity:0.8;
+}
+
+#nameLeft{
+position:fixed;
+top:10px;
+left:15px;
+font-size:14px;
+}
+
+#nameRight{
+position:fixed;
+top:10px;
+right:15px;
+font-size:14px;
+}
+
+/* estrellas */
+
+#stars{
+position:fixed;
+width:100%;
+height:100%;
+top:0;
+left:0;
+z-index:-3;
+}
+
+.star{
+position:absolute;
+width:2px;
+height:2px;
+background:white;
+border-radius:50%;
+animation:twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle{
+0%{opacity:0.2;}
+100%{opacity:1;}
+}
+
+/* PLANETAS REALES */
+
+.planet{
+position:fixed;
+border-radius:50%;
+background-size:cover;
+background-position:center;
+opacity:0.22;
+z-index:-4;
+animation:float 40s infinite ease-in-out;
+pointer-events:none;
+box-shadow:0 0 40px rgba(255,255,255,0.2);
+}
+
+@keyframes float{
+0%{transform:translateY(0px)}
+50%{transform:translateY(40px)}
+100%{transform:translateY(0px)}
+}
+
+/* meteoritos */
+
+.meteor{
+position:absolute;
+width:3px;
+height:3px;
+background:white;
+box-shadow:0 0 10px white;
+animation:meteorFall linear forwards;
+}
+
+@keyframes meteorFall{
+0%{
+transform:translate(0,0);
+opacity:1;
+}
+100%{
+transform:translate(-600px,600px);
+opacity:0;
+}
+}
+
+/* corazones */
+
+.heart{
+position:absolute;
+color:#ff4d6d;
+font-size:18px;
+animation:fall linear forwards;
+}
+
+@keyframes fall{
+0%{
+transform:translateY(-50px);
+opacity:0;
+}
+10%{opacity:1;}
+100%{
+transform:translateY(110vh);
+opacity:0;
+}
+}
+
+/* constelación */
+
+.constellation{
+position:absolute;
+width:200px;
+height:180px;
+}
+
+.constellation span{
+position:absolute;
+width:3px;
+height:3px;
+background:white;
+border-radius:50%;
+box-shadow:0 0 10px white;
+}
+
+/* scanner */
+
+.container{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:40px 20px;
+}
+
+#scanner{
+position:relative;
+width:160px;
+height:200px;
+margin-top:20px;
+cursor:pointer;
+}
+
+#fingerSVG{
+width:100%;
+height:100%;
+stroke:white;
+fill:none;
+stroke-width:2;
+}
+
+.scan-line{
+position:absolute;
+width:100%;
+height:4px;
+background:lime;
+top:0;
+box-shadow:0 0 15px lime;
+opacity:0;
+}
+
+.scanning .scan-line{
+animation:scanMove 2s linear infinite;
+opacity:1;
+}
+
+@keyframes scanMove{
+0%{top:0;}
+100%{top:180px;}
+}
+
+#message{
+display:none;
+max-width:800px;
+line-height:1.7;
+font-size:18px;
+white-space:pre-wrap;
+text-align:left;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="date">6/4/2024❤️</div>
+<div id="nameLeft">Morena</div>
+<div id="nameRight">Alex</div>
+
+<div id="stars"></div>
+
+<div class="constellation" style="top:20%; left:10%;">
+<span style="top:40px; left:90px"></span>
+<span style="top:60px; left:60px"></span>
+<span style="top:60px; left:120px"></span>
+<span style="top:90px; left:40px"></span>
+<span style="top:90px; left:140px"></span>
+<span style="top:120px; left:70px"></span>
+<span style="top:120px; left:110px"></span>
+</div>
+
+<div class="container" id="start">
+
+<h2>Bienvenida mi amor....te quería decir algo</h2>
+<p>Te voy a escanear para asegurarme de q seas el amor de mi vida</p>
+
+<div id="scanner">
+<svg id="fingerSVG" viewBox="0 0 100 140">
+<path d="M50 10 C20 20, 20 60, 50 70 C80 60, 80 20, 50 10"/>
+<path d="M35 40 C40 55, 60 55, 65 40"/>
+<path d="M30 60 C40 75, 60 75, 70 60"/>
+<path d="M25 80 C40 100, 60 100, 75 80"/>
+</svg>
+<div class="scan-line"></div>
+</div>
+
+<p id="progressText"></p>
+
+</div>
+
+<div class="container">
+<p id="message"></p>
+</div>
+
+<script>
+
+/* estrellas */
+
+function createStars(){
+const stars=document.getElementById("stars");
+
+for(let i=0;i<250;i++){
+
+let star=document.createElement("div");
+star.className="star";
+
+star.style.top=Math.random()*100+"%";
+star.style.left=Math.random()*100+"%";
+
+star.style.animationDuration=(Math.random()*3+1)+"s";
+
+stars.appendChild(star);
+
+}
+}
+
+/* meteoritos */
+
+function meteorShower(){
+
+setInterval(()=>{
+
+let meteor=document.createElement("div");
+
+meteor.className="meteor";
+
+meteor.style.top=Math.random()*40+"%";
+meteor.style.left=Math.random()*100+"%";
+
+meteor.style.animationDuration=(Math.random()*2+1)+"s";
+
+document.body.appendChild(meteor);
+
+setTimeout(()=>meteor.remove(),2000)
+
+},3000)
+
+}
+
+/* PLANETAS REALES */
+
+function createPlanets(){
+
+const planets = [
+{
+img:"https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg",
+size:120,
+top:"15%",
+left:"5%"
+},
+{
+img:"https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg",
+size:160,
+top:"70%",
+left:"80%"
+},
+{
+img:"https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg",
+size:150,
+top:"40%",
+left:"85%"
+},
+{
+img:"https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg",
+size:110,
+top:"75%",
+left:"10%"
+},
+{
+img:"https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg",
+size:90,
+top:"20%",
+left:"75%"
+}
+];
+
+planets.forEach(p=>{
+
+let planet=document.createElement("div");
+
+planet.className="planet";
+
+planet.style.width=p.size+"px";
+planet.style.height=p.size+"px";
+
+planet.style.backgroundImage=`url(${p.img})`;
+
+planet.style.top=p.top;
+planet.style.left=p.left;
+
+document.body.appendChild(planet);
+
+});
+
+}
+
+/* corazones */
+
+function createHearts(){
+
+setInterval(()=>{
+
+let heart=document.createElement("div");
+
+heart.className="heart";
+
+heart.innerHTML="❤";
+
+heart.style.left=Math.random()*100+"vw";
+
+heart.style.animationDuration=(Math.random()*3+3)+"s";
+
+document.body.appendChild(heart);
+
+setTimeout(()=>heart.remove(),6000);
+
+},900);
+
+}
+
+createStars();
+meteorShower();
+createPlanets();
+createHearts();
+
+/* scanner */
+
+const scanner = document.getElementById("scanner");
+const progressText = document.getElementById("progressText");
+
+let holdTimer;
+let holdTime = 0;
+let scanning = false;
+
+scanner.addEventListener("mousedown", startHold);
+scanner.addEventListener("touchstart", startHold);
+
+scanner.addEventListener("mouseup", cancelHold);
+scanner.addEventListener("mouseleave", cancelHold);
+scanner.addEventListener("touchend", cancelHold);
+
+function startHold(){
+
+if(scanning) return;
+
+scanning = true;
+
+scanner.classList.add("scanning");
+
+progressText.textContent="Registrando......";
+
+holdTimer = setInterval(()=>{
+
+holdTime += 100;
+
+if(holdTime >= 15000){
+
+clearInterval(holdTimer);
+
+unlock();
+
+}
+
+},100);
+
+}
+
+function cancelHold(){
+
+if(holdTime < 15000){
+
+clearInterval(holdTimer);
+
+holdTime = 0;
+
+scanner.classList.remove("scanning");
+
+progressText.textContent="";
+
+scanning = false;
+
+}
+
+}
+
+function unlock(){
+
+progressText.textContent="Carga completa, ya puedes ingresar polososa❤️";
+
+playBeep();
+
+setTimeout(()=>{
+
+document.getElementById("start").style.display="none";
+
+document.body.style.overflow="auto";
+
+typeText();
+
+},2000);
+
+}
+
+function playBeep(){
+
+const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+const osc = ctx.createOscillator();
+
+osc.type="sine";
+
+osc.frequency.setValueAtTime(600, ctx.currentTime);
+
+osc.connect(ctx.destination);
+
+osc.start();
+
+osc.stop(ctx.currentTime + 0.3);
+
+}
+
+/* texto */
+
+function typeText(){
+
+const message = document.getElementById("message");
+
+message.style.display="block";
+
+const text = `Me pone muy feliz de volver a estar a tu lado, de volver a compartir momentos y risas, de volver abrazarnos las veces q queramos y de estar presente físicamente. 
+
+Me pone muy feliz el saber q salgo de mi casa y lo primero q hago es verte, al saber q lo primero q hago al levantarme es ir contigo y enserio lo disfruto mucho. 
+
+Me pone muy feliz q a pesar de todos los obstáculos q tuvimos seguimos presente, q por lo q tanto trabajamos hoy en día lo logramos.
+
+En serio q estoy muy feliz amor de volver a vernos otra vez, de reencontrarnos y de pasar de vernos cada 1-2 semanas paso a vernos todos los días y casi todo el día.
+
+ Perdón si aveces actuó raro y más ahora, es q todavía no logro caer en q estemos juntos, en el sentido de q nos veamos todos los días por q parecía algo tan imposible en su momento q ahora es algo normal. 
+
+También perdón por esas inseguridades, de lejos es peor pero juntos no, por eso quiero q en todo momento estés a mi lado, no para q aceptes el entorno sino para q estés conmigo. 
+
+Te agradezco mucho por el apoyo q me das, por levantarme las veces q me tropecé y por las veces q aún no podía, me enseñaste a como pedirte ayuda aunque aún me sigue costando un poquito pero lo voy mejorando día a día. 
+
+Tambien gracias por acompañarme en cada proceso q tuve y por enseñarme todas aquellas cosas q no sabía, simplemente..... gracias`;
+
+let i = 0;
+
+function escribir(){
+
+if(i < text.length){
+
+message.textContent += text.charAt(i);
+
+i++;
+
+setTimeout(escribir,35);
+
+}
+
+}
+
+escribir();
+
+}
+
+</script>
+
+</body>
+</html>
